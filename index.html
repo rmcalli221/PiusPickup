@@ -235,6 +235,8 @@ select option{background:var(--surf2)}
       <button class="sort-btn" onclick="setSort('apg')">APG</button>
       <button class="sort-btn" onclick="setSort('fgpct')">FG%</button>
       <button class="sort-btn" onclick="setSort('fpg')">Fouls</button>
+      <button class="sort-btn" onclick="setSort('ftmpg')">FTM</button>
+      <button class="sort-btn" onclick="setSort('ftapg')">FTA</button>
       <button class="sort-btn" onclick="setSort('name')">Name</button>
     </div>
     <div id="standings-content"></div>
@@ -397,6 +399,8 @@ const STAT_DEFS = [
   { key:'stl',     label:'Steals',           short:'STL',  isClutch:false, isFgMade:false, isFgTaken:false },
   { key:'blk',     label:'Blocks',           short:'BLK',  isClutch:false, isFgMade:false, isFgTaken:false },
   { key:'foul',    label:'Fouls',            short:'FLS',  isClutch:false, isFgMade:false, isFgTaken:false },
+  { key:'ftm',     label:'FT Made',          short:'FTM',  isClutch:false, isFgMade:false, isFgTaken:false },
+  { key:'fta',     label:'FT Attempted',     short:'FTA',  isClutch:false, isFgMade:false, isFgTaken:false },
   { key:'clutch',  label:'Clutch Points',    short:'CLCH', isClutch:true,  isFgMade:false, isFgTaken:false },
 ];
 // Stats the admin can toggle (all of them)
@@ -582,6 +586,8 @@ function computeStats(){
       totalStl:0, gpStl:0,
       totalBlk:0, gpBlk:0,
       totalFoul:0, gpFoul:0,
+      totalFtm:0, gpFtm:0,
+      totalFta:0, gpFta:0,
       totalClutch:0, gpClutch:0,
       totalFgm:0,  totalFga:0, gpFg:0,
     };
@@ -594,7 +600,7 @@ function computeStats(){
     const processPlayer=(p, wonGame)=>{
       if(!stats[p.name]) stats[p.name]={name:p.name, gp:0, wins:0, losses:0,
         totalPts:0, gpPts:0, totalReb:0, gpReb:0, totalAst:0, gpAst:0,
-        totalStl:0, gpStl:0, totalBlk:0, gpBlk:0, totalFoul:0, gpFoul:0, totalClutch:0, gpClutch:0,
+        totalStl:0, gpStl:0, totalBlk:0, gpBlk:0, totalFoul:0, gpFoul:0, totalFtm:0, gpFtm:0, totalFta:0, gpFta:0, totalClutch:0, gpClutch:0,
         totalFgm:0, totalFga:0, gpFg:0};
       const s=stats[p.name];
       s.gp++;
@@ -606,6 +612,8 @@ function computeStats(){
       if(tracked.includes('stl'))    { s.totalStl+=p.stl??0;    s.gpStl++;    }
       if(tracked.includes('blk'))    { s.totalBlk+=p.blk??0;    s.gpBlk++;    }
       if(tracked.includes('foul'))   { s.totalFoul+=p.foul??0;  s.gpFoul++;   }
+      if(tracked.includes('ftm'))    { s.totalFtm+=p.ftm??0;    s.gpFtm++;    }
+      if(tracked.includes('fta'))    { s.totalFta+=p.fta??0;    s.gpFta++;    }
       if(tracked.includes('clutch')) { s.totalClutch+=p.clutch??0; s.gpClutch++; }
       if(tracked.includes('fgm')&&tracked.includes('fga')){
         s.totalFgm+=p.fgm??0; s.totalFga+=p.fga??0; s.gpFg++;
@@ -624,6 +632,8 @@ function computeStats(){
     spg:   s.gpStl>0    ? s.totalStl/s.gpStl        : null,
     bpg:   s.gpBlk>0    ? s.totalBlk/s.gpBlk        : null,
     fpg:   s.gpFoul>0   ? s.totalFoul/s.gpFoul       : null,
+    ftmpg: s.gpFtm>0    ? s.totalFtm/s.gpFtm         : null,
+    ftapg: s.gpFta>0    ? s.totalFta/s.gpFta         : null,
     cpg:   s.gpClutch>0 ? s.totalClutch/s.gpClutch  : null,
     fgpct: s.gpFg>0&&s.totalFga>0 ? s.totalFgm/s.totalFga : null,
   }));
@@ -648,6 +658,8 @@ function renderStandings(){
     if(sortBy==='apg')  return (b.apg??-1)-(a.apg??-1);
     if(sortBy==='fgpct')return (b.fgpct??-1)-(a.fgpct??-1);
     if(sortBy==='fpg')  return (b.fpg??-1)-(a.fpg??-1);
+    if(sortBy==='ftmpg')return (b.ftmpg??-1)-(a.ftmpg??-1);
+    if(sortBy==='ftapg')return (b.ftapg??-1)-(a.ftapg??-1);
     if(sortBy==='name') return a.name.localeCompare(b.name);
     return 0;
   });
@@ -666,8 +678,10 @@ function renderStandings(){
     const ppgStr=s.ppg!=null?s.ppg.toFixed(1):'—';
     const rpgStr=s.rpg!=null?s.rpg.toFixed(1):'—';
     const apgStr=s.apg!=null?s.apg.toFixed(1):'—';
-    const fpgStr=s.fpg!=null?s.fpg.toFixed(1):'—';
-    const fgStr =s.fgpct!=null?(s.fgpct*100).toFixed(1)+'%':'—';
+    const fpgStr  =s.fpg!=null?s.fpg.toFixed(1):'—';
+    const ftmStr  =s.ftmpg!=null?s.ftmpg.toFixed(1):'—';
+    const ftaStr  =s.ftapg!=null?s.ftapg.toFixed(1):'—';
+    const fgStr   =s.fgpct!=null?(s.fgpct*100).toFixed(1)+'%':'—';
     const barW  =s.ppg!=null?((s.ppg/maxPpg)*100).toFixed(1):0;
     return `<tr onclick="jumpToPlayer('${s.name}')">
       <td class="rank-cell ${i===0?'rank-1c':''}">${i+1}</td>
@@ -679,12 +693,14 @@ function renderStandings(){
       <td class="stat-cell">${apgStr}</td>
       <td class="stat-cell">${fgStr}</td>
       <td class="stat-cell">${fpgStr}</td>
+      <td class="stat-cell">${ftmStr}</td>
+      <td class="stat-cell">${ftaStr}</td>
     </tr>`;
   }).join('');
 
   document.getElementById('standings-content').innerHTML=chips+`
     <table class="standings-table">
-      <thead><tr><th>#</th><th>Player</th><th>W–L</th><th>GP</th><th>PPG</th><th>RPG</th><th>APG</th><th>FG%</th><th>FLS</th></tr></thead>
+      <thead><tr><th>#</th><th>Player</th><th>W–L</th><th>GP</th><th>PPG</th><th>RPG</th><th>APG</th><th>FG%</th><th>FLS</th><th>FTM</th><th>FTA</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
@@ -712,7 +728,7 @@ function renderPlayerDetail(){
   // Accumulate stats only when tracked
   let wins=0, losses=0;
   let totPts=0, gpPts=0, totReb=0, gpReb=0, totAst=0, gpAst=0;
-  let totStl=0, gpStl=0, totBlk=0, gpBlk=0, totFoul=0, gpFoul=0, totClutch=0, gpClutch=0;
+  let totStl=0, gpStl=0, totBlk=0, gpBlk=0, totFoul=0, gpFoul=0, totFtm=0, gpFtm=0, totFta=0, gpFta=0, totClutch=0, gpClutch=0;
   let totFgm=0, totFga=0, gpFg=0;
 
   const rows=games.map(g=>{
@@ -732,6 +748,8 @@ function renderPlayerDetail(){
     if(tracked.includes('stl')){ const v=entry?.stl??0; totStl+=v; gpStl++; statParts.push(`${v} stl`); }
     if(tracked.includes('blk')){ const v=entry?.blk??0; totBlk+=v; gpBlk++; statParts.push(`${v} blk`); }
     if(tracked.includes('foul')){ const v=entry?.foul??0; totFoul+=v; gpFoul++; statParts.push(`${v} fls`); }
+    if(tracked.includes('ftm')){ const v=entry?.ftm??0; totFtm+=v; gpFtm++; statParts.push(`${v} ftm`); }
+    if(tracked.includes('fta')){ const v=entry?.fta??0; totFta+=v; gpFta++; statParts.push(`${v} fta`); }
     if(tracked.includes('clutch')){ const v=entry?.clutch??0; totClutch+=v; gpClutch++; statParts.push(`${v} clutch`); }
     if(tracked.includes('fgm')&&tracked.includes('fga')){
       const m=entry?.fgm??0, a=entry?.fga??0;
@@ -763,6 +781,8 @@ function renderPlayerDetail(){
   if(gpStl>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${(totStl/gpStl).toFixed(1)}</div><div class="stat-chip-label">SPG</div></div>`);
   if(gpBlk>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${(totBlk/gpBlk).toFixed(1)}</div><div class="stat-chip-label">BPG</div></div>`);
   if(gpFoul>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${(totFoul/gpFoul).toFixed(1)}</div><div class="stat-chip-label">FLS/G</div></div>`);
+  if(gpFtm>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${(totFtm/gpFtm).toFixed(1)}</div><div class="stat-chip-label">FTM/G</div></div>`);
+  if(gpFta>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${(totFta/gpFta).toFixed(1)}</div><div class="stat-chip-label">FTA/G</div></div>`);
   if(gpClutch>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${(totClutch/gpClutch).toFixed(1)}</div><div class="stat-chip-label">CLCH/G</div></div>`);
   if(gpFg>0&&totFga>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${((totFgm/totFga)*100).toFixed(1)}%</div><div class="stat-chip-label">FG%</div></div>`);
   chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${games.length}</div><div class="stat-chip-label">GP</div></div>`);
