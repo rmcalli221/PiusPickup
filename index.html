@@ -9,259 +9,148 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <style>
-/* ── TOKENS ── */
 :root {
-  --bg:       #0a0d14;
-  --court:    #0d1120;
-  --surf:     #111827;
-  --surf2:    #1a2236;
-  --surf3:    #1f2a40;
-  --border:   #243048;
-  --bord2:    #2e3d5c;
-
-  --orange:   #f5d020;   /* yellow */
-  --orange2:  #ffe45e;   /* lighter yellow */
-  --cream:    #ffffff;   /* white */
-  --chalk:    #c8d4e8;   /* light blue-white */
-  --win:      #4ade80;
-  --loss:     #f87171;
-
-  --text:     #ffffff;
-  --muted:    #3d5070;
-  --subtle:   #6b82a8;
-
-  --r: 6px;
-  --fd: 'Barlow Condensed', sans-serif;
-  --fm: 'JetBrains Mono', monospace;
-  --fb: 'Inter', sans-serif;
+  --bg:     #0a0d14; --court: #0d1120; --surf:  #111827;
+  --surf2:  #1a2236; --surf3: #1f2a40; --border:#243048; --bord2: #2e3d5c;
+  --orange: #f5d020; --orange2:#ffe45e; --cream: #ffffff; --chalk: #c8d4e8;
+  --win:    #4ade80; --loss:  #f87171;
+  --text:   #ffffff; --muted: #3d5070; --subtle:#6b82a8;
+  --r:6px; --fd:'Barlow Condensed',sans-serif; --fm:'JetBrains Mono',monospace; --fb:'Inter',sans-serif;
 }
-
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
-body{
-  background:var(--bg);color:var(--text);
-  font-family:var(--fb);font-size:15px;line-height:1.5;
-  min-height:100vh;
-}
-
-/* ── COURT LINES (signature element) ── */
-body::before{
-  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:
-    radial-gradient(ellipse 320px 180px at 50% -20px, transparent 95%, rgba(245,208,32,.07) 95%, rgba(245,208,32,.07) 100%, transparent 100%),
-    linear-gradient(90deg, rgba(245,208,32,.03) 1px, transparent 1px),
-    linear-gradient(rgba(245,208,32,.03) 1px, transparent 1px);
-  background-size:100% 100%, 60px 60px, 60px 60px;
-  opacity:1;
-}
-
-/* subtle navy grain texture */
-body::after{
-  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:repeating-linear-gradient(
-    92deg,
-    transparent,
-    transparent 38px,
-    rgba(245,208,32,.012) 38px,
-    rgba(245,208,32,.012) 40px
-  );
-}
-
-/* ── LAYOUT ── */
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:15px;line-height:1.5;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(ellipse 320px 180px at 50% -20px,transparent 95%,rgba(245,208,32,.07) 95%,rgba(245,208,32,.07) 100%,transparent 100%),linear-gradient(90deg,rgba(245,208,32,.03) 1px,transparent 1px),linear-gradient(rgba(245,208,32,.03) 1px,transparent 1px);
+  background-size:100% 100%,60px 60px,60px 60px}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:repeating-linear-gradient(92deg,transparent,transparent 38px,rgba(245,208,32,.012) 38px,rgba(245,208,32,.012) 40px)}
 #app{position:relative;z-index:1;max-width:720px;margin:0 auto;padding-bottom:100px}
 
-/* ── HEADER ── */
-header{
-  padding:32px 20px 20px;
-  border-bottom:3px solid var(--orange);
-  margin-bottom:0;
-}
-.league-eyebrow{
-  font-family:var(--fm);font-size:10px;letter-spacing:3px;
-  color:var(--orange);text-transform:uppercase;margin-bottom:4px;
-}
-.league-name-pius{
-  font-family:var(--fd);font-size:clamp(90px,20vw,140px);
-  font-weight:900;line-height:.85;letter-spacing:-2px;
-  text-transform:uppercase;color:var(--orange);
-  display:block;
-}
-.league-name-sub{
-  font-family:var(--fd);font-size:clamp(22px,5vw,34px);
-  font-weight:700;line-height:1;letter-spacing:6px;
-  text-transform:uppercase;color:var(--chalk);
-  display:block;margin-top:4px;
-}
-.header-meta{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-top:12px;
-}
+/* HEADER */
+header{padding:32px 20px 20px;border-bottom:3px solid var(--orange);margin-bottom:0}
+.league-eyebrow{font-family:var(--fm);font-size:10px;letter-spacing:3px;color:var(--orange);text-transform:uppercase;margin-bottom:4px}
+.league-name-pius{font-family:var(--fd);font-size:clamp(90px,20vw,140px);font-weight:900;line-height:.85;letter-spacing:-2px;text-transform:uppercase;color:var(--orange);display:block}
+.league-name-sub{font-family:var(--fd);font-size:clamp(22px,5vw,34px);font-weight:700;line-height:1;letter-spacing:6px;text-transform:uppercase;color:var(--chalk);display:block;margin-top:4px}
+.header-meta{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
 #status-bar{display:flex;align-items:center;gap:7px;font-family:var(--fm);font-size:10px;color:var(--muted)}
 .dot{width:6px;height:6px;border-radius:50%;background:var(--orange);animation:pulse 2.5s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .season-badge{font-family:var(--fm);font-size:10px;letter-spacing:2px;color:var(--muted)}
 
-/* ── NAV ── */
-nav{
-  position:sticky;top:0;z-index:20;
-  background:var(--bg);
-  border-bottom:1px solid var(--border);
-  display:flex;padding:0 20px;gap:0;
-  overflow-x:auto;scrollbar-width:none;
-}
+/* NAV */
+nav{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--border);display:flex;padding:0 20px;gap:0;overflow-x:auto;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
-nav button{
-  font-family:var(--fd);font-size:15px;letter-spacing:2px;font-weight:700;
-  text-transform:uppercase;background:none;border:none;cursor:pointer;
-  color:var(--muted);padding:14px 16px;
-  border-bottom:3px solid transparent;
-  transition:color .15s,border-color .15s;white-space:nowrap;
-}
+nav button{font-family:var(--fd);font-size:15px;letter-spacing:2px;font-weight:700;text-transform:uppercase;background:none;border:none;cursor:pointer;color:var(--muted);padding:14px 16px;border-bottom:3px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap}
 nav button:hover{color:var(--chalk)}
 nav button.active{color:var(--orange);border-bottom-color:var(--orange)}
 nav button.admin-btn.active{color:var(--loss);border-bottom-color:var(--loss)}
 
-/* ── SECTIONS ── */
+/* SECTIONS */
 .section{display:none;padding:24px 20px}
 .section.active{display:block;animation:fadeUp .18s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
 .sec-title{font-family:var(--fd);font-size:38px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;line-height:1}
 .sec-sub{font-family:var(--fm);font-size:10px;letter-spacing:2px;color:var(--muted);margin-bottom:22px}
 
-/* ── CARDS ── */
+/* CARDS */
 .card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:20px}
 .card+.card{margin-top:12px}
 
-/* ── FORM ── */
+/* FORM */
 label.fl{display:block;font-family:var(--fm);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
-select,input[type="text"],input[type="number"],input[type="date"],input[type="password"]{
-  width:100%;background:var(--surf2);border:1px solid var(--border);
-  border-radius:var(--r);color:var(--text);font-family:var(--fb);
-  font-size:15px;padding:10px 13px;outline:none;appearance:none;
-  transition:border-color .2s;
-}
+select,input[type="text"],input[type="number"],input[type="date"],input[type="password"]{width:100%;background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--fb);font-size:15px;padding:10px 13px;outline:none;appearance:none;transition:border-color .2s}
 select:focus,input:focus{border-color:var(--orange)}
 select option{background:var(--surf2)}
 .fg{margin-bottom:15px}
 
-/* ── BUTTONS ── */
-.btn{
-  border:none;border-radius:var(--r);cursor:pointer;
-  font-family:var(--fd);font-size:19px;font-weight:700;letter-spacing:2px;
-  text-transform:uppercase;padding:13px 24px;
-  transition:transform .15s,opacity .15s;
-}
+/* BUTTONS */
+.btn{border:none;border-radius:var(--r);cursor:pointer;font-family:var(--fd);font-size:19px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:13px 24px;transition:transform .15s,opacity .15s}
 .btn:hover{opacity:.88;transform:translateY(-1px)}
 .btn:active{transform:none}
 .btn:disabled{opacity:.3;cursor:not-allowed;transform:none}
 .btn-primary{background:var(--orange);color:#0e0e0e;width:100%}
 .btn-danger{background:var(--loss);color:#0e0e0e;width:100%}
-.btn-ghost{
-  background:none;border:1px solid var(--bord2);color:var(--subtle);
-  font-family:var(--fm);font-size:11px;letter-spacing:1px;
-  padding:7px 14px;border-radius:var(--r);cursor:pointer;
-  transition:all .15s;
-}
+.btn-ghost{background:none;border:1px solid var(--bord2);color:var(--subtle);font-family:var(--fm);font-size:11px;letter-spacing:1px;padding:7px 14px;border-radius:var(--r);cursor:pointer;transition:all .15s}
 .btn-ghost:hover{border-color:var(--orange);color:var(--orange)}
 
-/* ── GAME CARD (games list) ── */
-.game-card{
-  background:var(--surf);border:1px solid var(--border);border-radius:var(--r);
-  margin-bottom:10px;overflow:hidden;cursor:pointer;
-  transition:border-color .15s,background .15s;
-}
+/* STAT TOGGLE CHECKBOXES */
+.stat-toggles{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.stat-toggle{display:flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--border);border-radius:4px;padding:6px 12px;cursor:pointer;transition:all .15s;user-select:none;font-family:var(--fm);font-size:11px;letter-spacing:1px;color:var(--subtle)}
+.stat-toggle input{display:none}
+.stat-toggle.checked{background:rgba(245,208,32,.12);border-color:var(--orange);color:var(--orange)}
+.stat-toggle-dot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .15s}
+.stat-toggle.checked .stat-toggle-dot{background:var(--orange)}
+
+/* GAME CARD */
+.game-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;cursor:pointer;transition:border-color .15s,background .15s}
 .game-card:hover{border-color:var(--bord2);background:var(--surf2)}
-.game-card-head{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px 18px;
-}
+.game-card-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px}
 .game-date{font-family:var(--fm);font-size:11px;color:var(--muted);letter-spacing:1px}
 .game-score-display{display:flex;align-items:center;gap:12px}
-.team-score-chip{
-  display:flex;flex-direction:column;align-items:center;
-  min-width:52px;
-}
+.team-score-chip{display:flex;flex-direction:column;align-items:center;min-width:52px}
 .tsc-label{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}
 .tsc-score{font-family:var(--fd);font-size:32px;font-weight:800;line-height:1}
 .tsc-score.winner{color:var(--orange)}
 .score-dash{font-family:var(--fd);font-size:24px;color:var(--muted);font-weight:700}
-.game-players-preview{
-  font-family:var(--fm);font-size:10px;color:var(--muted);
-  padding:0 18px 12px;letter-spacing:.5px;
-}
+.game-players-preview{font-family:var(--fm);font-size:10px;color:var(--muted);padding:0 18px 12px;letter-spacing:.5px}
+.game-stat-badges{display:flex;gap:5px;padding:0 18px 12px;flex-wrap:wrap}
+.game-stat-badge{font-family:var(--fm);font-size:9px;letter-spacing:1px;background:var(--surf3);border:1px solid var(--border);border-radius:3px;padding:2px 7px;color:var(--subtle)}
 
-/* ── BOX SCORE MODAL ── */
-#modal-overlay{
-  display:none;position:fixed;inset:0;z-index:100;
-  background:rgba(0,0,0,.85);
-  align-items:flex-start;justify-content:center;
-  padding:24px 16px;overflow-y:auto;
-}
+/* MODAL */
+#modal-overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.85);align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto}
 #modal-overlay.open{display:flex}
-#modal-box{
-  background:var(--surf);border:1px solid var(--bord2);border-radius:var(--r);
-  width:100%;max-width:640px;overflow:hidden;
-  animation:fadeUp .2s ease;
-}
-.modal-head{
-  background:var(--surf2);padding:18px 20px;
-  display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid var(--border);
-}
+#modal-box{background:var(--surf);border:1px solid var(--bord2);border-radius:var(--r);width:100%;max-width:680px;overflow:hidden;animation:fadeUp .2s ease}
+.modal-head{background:var(--surf2);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
 .modal-title{font-family:var(--fd);font-size:26px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
 .modal-date{font-family:var(--fm);font-size:10px;color:var(--muted);letter-spacing:1px}
 .modal-close{background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;padding:0 4px;line-height:1}
 .modal-close:hover{color:var(--text)}
 .modal-body{padding:20px}
 
-/* box score teams */
-.bs-teams{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:480px){.bs-teams{grid-template-columns:1fr}}
-.bs-team{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
-.bs-team-head{
-  padding:12px 14px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-}
-.bs-team-label{font-family:var(--fd);font-size:18px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+/* BOX SCORE TABLE */
+.bs-team-wrap{margin-bottom:18px}
+.bs-team-head{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surf3);border-radius:var(--r) var(--r) 0 0}
+.bs-team-label{font-family:var(--fd);font-size:20px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
 .bs-team-total{font-family:var(--fd);font-size:28px;font-weight:900}
 .bs-team-total.winner{color:var(--orange)}
 .bs-win-badge{font-family:var(--fm);font-size:9px;letter-spacing:2px;padding:2px 8px;border-radius:3px;background:rgba(245,208,32,.18);color:var(--orange)}
-.bs-player-row{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:8px 14px;border-bottom:1px solid var(--border);font-size:13px;
-}
-.bs-player-row:last-child{border-bottom:none}
-.bs-pts{font-family:var(--fm);font-size:13px;font-weight:500}
-.bs-notes{font-family:var(--fm);font-size:10px;color:var(--muted);padding:10px 14px;letter-spacing:.5px}
+.bs-table{width:100%;border-collapse:collapse;background:var(--surf2);border-radius:0 0 var(--r) var(--r);overflow:hidden}
+.bs-table th{font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:6px 10px;text-align:right;border-bottom:1px solid var(--border);font-weight:500}
+.bs-table th:first-child{text-align:left}
+.bs-table td{padding:8px 10px;border-bottom:1px solid var(--border);font-size:13px;text-align:right;font-family:var(--fm)}
+.bs-table td:first-child{text-align:left;font-family:var(--fb);font-weight:500}
+.bs-table tbody tr:last-child td{border-bottom:none}
+.bs-table tbody tr:hover{background:rgba(255,255,255,.03)}
+.bs-notes{font-family:var(--fm);font-size:10px;color:var(--muted);padding:10px 0 0;letter-spacing:.5px}
 
-/* ── STANDINGS TABLE ── */
+/* STANDINGS */
 .standings-table{width:100%;border-collapse:collapse}
-.standings-table th{
-  font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;
-  color:var(--muted);font-weight:500;padding:8px 12px;
-  text-align:left;border-bottom:2px solid var(--border);
-}
-.standings-table th.r{text-align:right}
-.standings-table td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:14px;vertical-align:middle}
+.standings-table th{font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:500;padding:8px 10px;text-align:right;border-bottom:2px solid var(--border)}
+.standings-table th:first-child,.standings-table th:nth-child(2){text-align:left}
+.standings-table td{padding:10px 10px;border-bottom:1px solid var(--border);font-size:13px;text-align:right;vertical-align:middle}
+.standings-table td:first-child,.standings-table td:nth-child(2){text-align:left}
 .standings-table tbody tr:last-child td{border-bottom:none}
 .standings-table tbody tr{cursor:pointer;transition:background .12s}
 .standings-table tbody tr:hover{background:var(--surf2)}
-.rank-cell{font-family:var(--fm);color:var(--muted);font-size:12px;width:32px}
+.rank-cell{font-family:var(--fm);color:var(--muted);font-size:12px;width:28px}
 .rank-1c{color:var(--orange)}
 .player-name-cell{font-weight:600}
-.wl-cell{font-family:var(--fm);font-size:13px}
+.wl-cell{font-family:var(--fm);font-size:13px;text-align:left}
 .w{color:var(--win)}.l{color:var(--loss)}
-.ppg-cell{font-family:var(--fm);font-size:14px;font-weight:500;text-align:right}
-.gp-cell{font-family:var(--fm);font-size:12px;color:var(--muted);text-align:right}
-.pct-bar-wrap{width:60px;height:5px;background:var(--surf3);border-radius:3px;display:inline-block;vertical-align:middle;margin-left:8px}
+.stat-cell{font-family:var(--fm);font-size:12px;font-weight:500}
+.na-cell{font-family:var(--fm);font-size:11px;color:var(--muted)}
+.pct-bar-wrap{width:40px;height:4px;background:var(--surf3);border-radius:3px;display:inline-block;vertical-align:middle;margin-left:6px}
 .pct-bar-fill{height:100%;border-radius:3px;background:var(--orange)}
 
-/* ── PLAYER MODAL ── */
-.player-game-row{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;
-}
+/* SORT ROW */
+.sort-row{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.sort-btn{font-family:var(--fm);font-size:10px;letter-spacing:1px;background:var(--surf2);border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:4px;cursor:pointer;transition:all .15s}
+.sort-btn:hover{color:var(--text);border-color:var(--bord2)}
+.sort-btn.active{background:var(--orange);color:#0e0e0e;border-color:var(--orange)}
+
+/* PLAYER DETAIL */
+.player-game-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
 .player-game-row:last-child{border-bottom:none}
 .pgr-date{font-family:var(--fm);font-size:11px;color:var(--muted)}
 .pgr-result{font-family:var(--fm);font-size:11px;padding:2px 8px;border-radius:3px;font-weight:500}
@@ -269,80 +158,46 @@ select option{background:var(--surf2)}
 .pgr-l{background:rgba(248,113,113,.12);color:var(--loss)}
 .pgr-pts{font-family:var(--fm);font-size:14px;font-weight:500}
 .pgr-opp{font-size:12px;color:var(--subtle)}
+.pgr-stats{font-family:var(--fm);font-size:10px;color:var(--subtle);margin-top:2px}
 
-/* ── SORT CONTROLS ── */
-.sort-row{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-.sort-btn{
-  font-family:var(--fm);font-size:10px;letter-spacing:1px;
-  background:var(--surf2);border:1px solid var(--border);
-  color:var(--muted);padding:6px 12px;border-radius:4px;cursor:pointer;
-  transition:all .15s;
-}
-.sort-btn:hover{color:var(--text);border-color:var(--bord2)}
-.sort-btn.active{background:var(--orange);color:#0e0e0e;border-color:var(--orange)}
-
-/* ── ADMIN: player roster builder ── */
+/* ADMIN */
 .roster-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
 .roster-side{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
-.roster-side-title{
-  font-family:var(--fd);font-size:18px;font-weight:800;letter-spacing:1px;
-  text-transform:uppercase;margin-bottom:10px;
-}
+.roster-side-title{font-family:var(--fd);font-size:18px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
 .roster-side-title.a{color:var(--orange)}
 .roster-side-title.b{color:var(--chalk)}
-.player-chip{
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--surf3);border:1px solid var(--border);
-  border-radius:4px;padding:6px 10px;margin-bottom:6px;
-  font-size:13px;
-}
-.player-chip input[type=number]{
-  width:60px;background:var(--surf);border:1px solid var(--border);
-  border-radius:4px;color:var(--text);font-family:var(--fm);
-  font-size:13px;padding:4px 8px;outline:none;
-}
-.player-chip input[type=number]:focus{border-color:var(--orange)}
+.player-chip{background:var(--surf3);border:1px solid var(--border);border-radius:4px;padding:6px 10px;margin-bottom:6px;font-size:13px}
+.chip-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.chip-stats{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px}
+.chip-stat-input{display:flex;flex-direction:column;gap:2px}
+.chip-stat-input label{font-family:var(--fm);font-size:8px;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.chip-stat-input input{width:100%;background:var(--surf);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:var(--fm);font-size:12px;padding:3px 6px;outline:none}
+.chip-stat-input input:focus{border-color:var(--orange)}
 .remove-chip{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 4px;line-height:1}
 .remove-chip:hover{color:var(--loss)}
 .add-player-row{display:flex;gap:8px;margin-top:8px}
 .add-player-row select{flex:1}
-
-/* ── ADMIN SECTION ── */
 .admin-block{margin-bottom:28px}
-.admin-block-title{
-  font-family:var(--fm);font-size:10px;letter-spacing:2px;color:var(--muted);
-  text-transform:uppercase;margin-bottom:12px;
-  padding-bottom:8px;border-bottom:1px solid var(--border);
-}
+.admin-block-title{font-family:var(--fm);font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
 #admin-lock{text-align:center;padding:48px 20px}
 #admin-lock p{font-family:var(--fm);font-size:11px;color:var(--muted);letter-spacing:1px;margin-bottom:20px}
 .lock-form{max-width:260px;margin:0 auto}
 
-/* ── TOAST ── */
-#toast{
-  position:fixed;bottom:28px;left:50%;
-  transform:translateX(-50%) translateY(100px);
-  background:var(--surf2);border:1px solid var(--orange);
-  color:var(--orange);font-family:var(--fm);font-size:11px;
-  letter-spacing:1px;padding:11px 24px;border-radius:40px;
-  transition:transform .35s cubic-bezier(.34,1.56,.64,1);
-  z-index:300;white-space:nowrap;pointer-events:none;
-}
-#toast.show{transform:translateX(-50%) translateY(0)}
-#toast.err{border-color:var(--loss);color:var(--loss)}
-
-/* ── MISC ── */
+/* MISC */
 .empty{text-align:center;padding:48px 20px;font-family:var(--fm);font-size:11px;color:var(--muted);letter-spacing:1px}
 .empty-icon{font-size:36px;margin-bottom:10px}
-.stat-chips{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.stat-chip{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;flex:1;min-width:100px}
-.stat-chip-val{font-family:var(--fd);font-size:32px;font-weight:800;color:var(--orange)}
+.stat-chips{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.stat-chip{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;flex:1;min-width:90px}
+.stat-chip-val{font-family:var(--fd);font-size:28px;font-weight:800;color:var(--orange)}
 .stat-chip-label{font-family:var(--fm);font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:2px}
+
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surf2);border:1px solid var(--orange);color:var(--orange);font-family:var(--fm);font-size:11px;letter-spacing:1px;padding:11px 24px;border-radius:40px;transition:transform .35s cubic-bezier(.34,1.56,.64,1);z-index:300;white-space:nowrap;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast.err{border-color:var(--loss);color:var(--loss)}
 </style>
 </head>
 <body>
 <div id="app">
-
   <header>
     <div class="league-eyebrow">Est. 2026 · Weekly Run</div>
     <span class="league-name-pius">Pius</span>
@@ -371,11 +226,14 @@ select option{background:var(--surf2)}
   <div id="tab-standings" class="section">
     <div class="sec-title">Standings</div>
     <div class="sec-sub">INDIVIDUAL RECORDS</div>
-    <div class="sort-row">
+    <div class="sort-row" id="sort-row">
       <button class="sort-btn active" onclick="setSort('ppg')">PPG</button>
       <button class="sort-btn" onclick="setSort('wins')">Wins</button>
       <button class="sort-btn" onclick="setSort('pct')">Win %</button>
       <button class="sort-btn" onclick="setSort('gp')">Games</button>
+      <button class="sort-btn" onclick="setSort('rpg')">RPG</button>
+      <button class="sort-btn" onclick="setSort('apg')">APG</button>
+      <button class="sort-btn" onclick="setSort('fgpct')">FG%</button>
       <button class="sort-btn" onclick="setSort('name')">Name</button>
     </div>
     <div id="standings-content"></div>
@@ -398,7 +256,6 @@ select option{background:var(--surf2)}
   <div id="tab-admin" class="section">
     <div class="sec-title" style="color:var(--loss)">Admin</div>
     <div class="sec-sub">ENTER GAME RESULTS</div>
-
     <div id="admin-lock">
       <p>ADMIN ACCESS REQUIRED</p>
       <div class="lock-form">
@@ -406,24 +263,29 @@ select option{background:var(--surf2)}
         <button class="btn btn-danger" onclick="checkPw()">Unlock</button>
       </div>
     </div>
-
     <div id="admin-panel" style="display:none">
 
       <div class="admin-block">
         <div class="admin-block-title">New Game Entry</div>
         <div class="card">
-
           <div class="fg">
             <label class="fl">Game Date</label>
             <input type="date" id="game-date">
           </div>
           <div class="fg">
-            <label class="fl">Notes (optional — e.g. "gym 2, overtime")</label>
-            <input type="text" id="game-notes" placeholder="Optional notes about this game">
+            <label class="fl">Notes (optional)</label>
+            <input type="text" id="game-notes" placeholder="e.g. gym 2, overtime">
+          </div>
+
+          <!-- STAT SELECTION -->
+          <div class="fg">
+            <label class="fl">Stats tracked this game (select all that apply)</label>
+            <div class="stat-toggles" id="stat-toggles">
+              <!-- built by JS -->
+            </div>
           </div>
 
           <div class="roster-grid">
-            <!-- Team A -->
             <div class="roster-side">
               <div class="roster-side-title a">Team A</div>
               <div id="teamA-chips"></div>
@@ -432,7 +294,6 @@ select option{background:var(--surf2)}
                 <button class="btn-ghost" onclick="addPlayerToTeam('A')">Add</button>
               </div>
             </div>
-            <!-- Team B -->
             <div class="roster-side">
               <div class="roster-side-title b">Team B</div>
               <div id="teamB-chips"></div>
@@ -453,7 +314,6 @@ select option{background:var(--surf2)}
               <div id="teamB-total" style="font-family:var(--fm);font-size:28px;font-weight:700;color:var(--chalk);padding:8px 0">0</div>
             </div>
           </div>
-
           <button class="btn btn-primary" onclick="saveGame()">Save Game</button>
         </div>
       </div>
@@ -482,10 +342,8 @@ select option{background:var(--surf2)}
           <button class="btn btn-danger" onclick="deleteGame()">Delete Game</button>
         </div>
       </div>
-
     </div>
   </div>
-
 </div>
 
 <!-- BOX SCORE MODAL -->
@@ -501,15 +359,11 @@ select option{background:var(--surf2)}
     <div class="modal-body" id="modal-body"></div>
   </div>
 </div>
-
 <div id="toast"></div>
 
 <script>
 // ═══════════════════════════════════════════════
 // FIREBASE CONFIG
-// Reuse your existing Firebase project — just
-// add a 'games' and 'roster' collection alongside
-// your existing MapTap collections.
 // ═══════════════════════════════════════════════
 const firebaseConfig = {
   apiKey: "AIzaSyDOHRtZoi3qUe-ovNc5DAJrKRKSXx0IFzA",
@@ -522,53 +376,64 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+const ADMIN_PASSWORD = "dannysthicc";
+
 // ═══════════════════════════════════════════════
-// CONFIG
+// STAT DEFINITIONS
+// key        → stored field name on each player object
+// label      → display name
+// short      → column header abbreviation
+// isClutch   → true means it doesn't stack on pts (displayed separately)
+// isFgMade   → part of FG% calculation (numerator)
+// isFgTaken  → part of FG% calculation (denominator)
 // ═══════════════════════════════════════════════
-const ADMIN_PASSWORD = "dannysthicc";  // ← change this
+const STAT_DEFS = [
+  { key:'pts',     label:'Points',           short:'PTS',  isClutch:false, isFgMade:false, isFgTaken:false },
+  { key:'fgm',     label:'FG Made',          short:'FGM',  isClutch:false, isFgMade:true,  isFgTaken:false },
+  { key:'fga',     label:'FG Attempted',     short:'FGA',  isClutch:false, isFgMade:false, isFgTaken:true  },
+  { key:'reb',     label:'Rebounds',         short:'REB',  isClutch:false, isFgMade:false, isFgTaken:false },
+  { key:'ast',     label:'Assists',          short:'AST',  isClutch:false, isFgMade:false, isFgTaken:false },
+  { key:'stl',     label:'Steals',           short:'STL',  isClutch:false, isFgMade:false, isFgTaken:false },
+  { key:'blk',     label:'Blocks',           short:'BLK',  isClutch:false, isFgMade:false, isFgTaken:false },
+  { key:'clutch',  label:'Clutch Points',    short:'CLCH', isClutch:true,  isFgMade:false, isFgTaken:false },
+];
+// Stats the admin can toggle (all of them)
+const TOGGLEABLE_STATS = STAT_DEFS.map(s=>s.key);
 
 // ═══════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════
-let allGames  = [];   // [{id, date, notes, teamA:[{name,pts}], teamB:[{name,pts}], scoreA, scoreB}]
-let allRoster = [];   // [{id, name}]  — all registered players
+let allGames  = [];
+let allRoster = [];
 let sortBy    = 'ppg';
 
-// In-progress admin entry
-let entryA = [];  // [{name, pts}]
+// Admin entry state
+let entryA = [];   // [{name, pts, fgm, fga, reb, ast, stl, blk, clutch}]
 let entryB = [];
+let activeStats = new Set(); // which stats are toggled on for current game entry
 
 // ═══════════════════════════════════════════════
-// DATE / FORMAT HELPERS
+// HELPERS
 // ═══════════════════════════════════════════════
 function pad(n){ return String(n).padStart(2,'0'); }
-function today(){
-  const d=new Date();
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-}
-function fmtDate(ds){
-  if(!ds) return '';
-  const [y,m,d]=ds.split('-').map(Number);
-  return new Date(y,m-1,d).toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric',year:'numeric'});
-}
-function fmtShort(ds){
-  if(!ds) return '';
-  const [y,m,d]=ds.split('-').map(Number);
-  return new Date(y,m-1,d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-}
+function today(){ const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+function fmtDate(ds){ if(!ds)return''; const [y,m,d]=ds.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric',year:'numeric'}); }
+function fmtShort(ds){ if(!ds)return''; const [y,m,d]=ds.split('-').map(Number); return new Date(y,m-1,d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
 function setStatus(msg){ document.getElementById('status-txt').textContent=msg; }
+function activeTab(){ return document.querySelector('.section.active')?.id?.replace('tab-','')||''; }
+
+function fmtFgPct(made, taken){
+  if(!taken || taken===0) return '—';
+  return ((made/taken)*100).toFixed(1)+'%';
+}
 
 // ═══════════════════════════════════════════════
 // FIREBASE LISTENERS
 // ═══════════════════════════════════════════════
 function startListeners(){
-  // Games — ordered by date desc
   db.collection('ppl_games').orderBy('date','desc').onSnapshot(snap=>{
     allGames=[];
-    snap.forEach(doc=>{
-      const d=doc.data();
-      allGames.push({id:doc.id,...d});
-    });
+    snap.forEach(doc=>{ const d=doc.data(); allGames.push({id:doc.id,...d}); });
     setStatus(`Updated ${new Date().toLocaleTimeString()}`);
     document.getElementById('game-count-badge').textContent=`${allGames.length} game${allGames.length!==1?'s':''}`;
     const tab=activeTab();
@@ -578,7 +443,6 @@ function startListeners(){
     refreshAdminGameSelect();
   }, err=>{setStatus('Connection error');console.error(err);});
 
-  // Roster
   db.collection('ppl_roster').orderBy('name').onSnapshot(snap=>{
     allRoster=[];
     snap.forEach(doc=>allRoster.push({id:doc.id,...doc.data()}));
@@ -586,10 +450,6 @@ function startListeners(){
     refreshPlayerSelects();
     renderPlayerSelect();
   }, err=>console.error(err));
-}
-
-function activeTab(){
-  return document.querySelector('.section.active')?.id?.replace('tab-','')||'';
 }
 
 // ═══════════════════════════════════════════════
@@ -614,10 +474,13 @@ function renderGames(){
     return;
   }
   const html=allGames.map(g=>{
-    const winA=g.scoreA>g.scoreB;
-    const winB=g.scoreB>g.scoreA;
+    const winA=g.scoreA>g.scoreB, winB=g.scoreB>g.scoreA;
     const previewA=g.teamA.slice(0,3).map(p=>p.name).join(', ')+(g.teamA.length>3?` +${g.teamA.length-3}`:'');
     const previewB=g.teamB.slice(0,3).map(p=>p.name).join(', ')+(g.teamB.length>3?` +${g.teamB.length-3}`:'');
+    const trackedStats = (g.trackedStats||[]);
+    const badgeHtml = trackedStats.length
+      ? `<div class="game-stat-badges">${trackedStats.map(k=>{ const d=STAT_DEFS.find(x=>x.key===k); return d?`<div class="game-stat-badge">${d.short}</div>`:''; }).join('')}</div>`
+      : '';
     return `<div class="game-card" onclick="openModal('${g.id}')">
       <div class="game-card-head">
         <div class="game-date">${fmtShort(g.date)}</div>
@@ -634,6 +497,7 @@ function renderGames(){
         </div>
       </div>
       <div class="game-players-preview">${previewA} &nbsp;·&nbsp; ${previewB}</div>
+      ${badgeHtml}
     </div>`;
   }).join('');
   document.getElementById('games-list').innerHTML=html;
@@ -646,134 +510,173 @@ function openModal(gameId){
   const g=allGames.find(x=>x.id===gameId);
   if(!g) return;
   const winA=g.scoreA>g.scoreB, winB=g.scoreB>g.scoreA;
+  const tracked=g.trackedStats||[];
 
-  const teamRows=(players)=>players
-    .slice().sort((a,b)=>b.pts-a.pts)
-    .map(p=>`<div class="bs-player-row"><span>${p.name}</span><span class="bs-pts">${p.pts}</span></div>`)
-    .join('');
+  // Build column headers: always Name + PTS, then tracked stats
+  // If both fgm and fga are tracked, show FG% instead of separate columns
+  const hasFgm=tracked.includes('fgm'), hasFga=tracked.includes('fga');
+  const showFgPct=hasFgm&&hasFga;
+  const statCols=tracked.filter(k=>{
+    if(showFgPct&&(k==='fgm'||k==='fga')) return false;
+    return true;
+  });
+  if(showFgPct) statCols.push('fgpct');
+
+  const colHeaders=statCols.map(k=>{
+    if(k==='fgpct') return '<th>FG%</th>';
+    const d=STAT_DEFS.find(x=>x.key===k);
+    return d?`<th>${d.short}</th>`:'';
+  }).join('');
+
+  const teamTable=(players,winSide)=>{
+    const sorted=[...players].sort((a,b)=>b.pts-a.pts);
+    const rowsHtml=sorted.map(p=>{
+      const statCells=statCols.map(k=>{
+        if(k==='fgpct') return `<td>${fmtFgPct(p.fgm,p.fga)}</td>`;
+        const v=p[k];
+        return `<td>${v!=null?v:'—'}</td>`;
+      }).join('');
+      return `<tr><td>${p.name}</td><td>${p.pts??'—'}</td>${statCells}</tr>`;
+    }).join('');
+    return `<div class="bs-team-wrap">
+      <div class="bs-team-head">
+        <div>
+          <div class="bs-team-label">Team ${winSide==='A'?'A':'B'}</div>
+          ${(winSide==='A'&&winA)||(winSide==='B'&&winB)?'<div class="bs-win-badge">WIN</div>':''}
+        </div>
+        <div class="bs-team-total ${(winSide==='A'&&winA)||(winSide==='B'&&winB)?'winner':''}">${winSide==='A'?g.scoreA:g.scoreB}</div>
+      </div>
+      <table class="bs-table">
+        <thead><tr><th>Player</th><th>PTS</th>${colHeaders}</tr></thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    </div>`;
+  };
 
   document.getElementById('modal-title').textContent='Box Score';
   document.getElementById('modal-date').textContent=fmtDate(g.date).toUpperCase();
-  document.getElementById('modal-body').innerHTML=`
-    <div class="bs-teams">
-      <div class="bs-team">
-        <div class="bs-team-head">
-          <div>
-            <div class="bs-team-label">Team A</div>
-            ${winA?'<div class="bs-win-badge">WIN</div>':''}
-          </div>
-          <div class="bs-team-total ${winA?'winner':''}">${g.scoreA}</div>
-        </div>
-        ${teamRows(g.teamA)}
-      </div>
-      <div class="bs-team">
-        <div class="bs-team-head">
-          <div>
-            <div class="bs-team-label">Team B</div>
-            ${winB?'<div class="bs-win-badge">WIN</div>':''}
-          </div>
-          <div class="bs-team-total ${winB?'winner':''}">${g.scoreB}</div>
-        </div>
-        ${teamRows(g.teamB)}
-      </div>
-    </div>
-    ${g.notes?`<div class="bs-notes" style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px">📝 ${g.notes}</div>`:''}`;
+  document.getElementById('modal-body').innerHTML=
+    teamTable(g.teamA,'A')+
+    teamTable(g.teamB,'B')+
+    (g.notes?`<div class="bs-notes">📝 ${g.notes}</div>`:'');
 
   document.getElementById('modal-overlay').classList.add('open');
 }
-function closeModal(e){
-  if(e.target===document.getElementById('modal-overlay')) closeModalDirect();
-}
-function closeModalDirect(){
-  document.getElementById('modal-overlay').classList.remove('open');
-}
+function closeModal(e){ if(e.target===document.getElementById('modal-overlay')) closeModalDirect(); }
+function closeModalDirect(){ document.getElementById('modal-overlay').classList.remove('open'); }
 
 // ═══════════════════════════════════════════════
 // COMPUTE PLAYER STATS
+// Per-stat averages only count games where that stat was tracked.
 // ═══════════════════════════════════════════════
 function computeStats(){
   const stats={};
+
   allRoster.forEach(p=>{
-    stats[p.name]={name:p.name,gp:0,wins:0,losses:0,totalPts:0};
+    stats[p.name]={name:p.name, gp:0, wins:0, losses:0,
+      totalPts:0, gpPts:0,
+      totalReb:0, gpReb:0,
+      totalAst:0, gpAst:0,
+      totalStl:0, gpStl:0,
+      totalBlk:0, gpBlk:0,
+      totalClutch:0, gpClutch:0,
+      totalFgm:0,  totalFga:0, gpFg:0,
+    };
   });
+
   allGames.forEach(g=>{
     const winA=g.scoreA>g.scoreB, winB=g.scoreB>g.scoreA;
-    g.teamA.forEach(p=>{
-      if(!stats[p.name]) stats[p.name]={name:p.name,gp:0,wins:0,losses:0,totalPts:0};
-      stats[p.name].gp++;
-      stats[p.name].totalPts+=p.pts;
-      if(winA) stats[p.name].wins++; else if(winB) stats[p.name].losses++;
-    });
-    g.teamB.forEach(p=>{
-      if(!stats[p.name]) stats[p.name]={name:p.name,gp:0,wins:0,losses:0,totalPts:0};
-      stats[p.name].gp++;
-      stats[p.name].totalPts+=p.pts;
-      if(winB) stats[p.name].wins++; else if(winA) stats[p.name].losses++;
-    });
+    const tracked=g.trackedStats||[];
+
+    const processPlayer=(p, wonGame)=>{
+      if(!stats[p.name]) stats[p.name]={name:p.name, gp:0, wins:0, losses:0,
+        totalPts:0, gpPts:0, totalReb:0, gpReb:0, totalAst:0, gpAst:0,
+        totalStl:0, gpStl:0, totalBlk:0, gpBlk:0, totalClutch:0, gpClutch:0,
+        totalFgm:0, totalFga:0, gpFg:0};
+      const s=stats[p.name];
+      s.gp++;
+      if(wonGame) s.wins++; else s.losses++;
+
+      if(tracked.includes('pts'))    { s.totalPts+=p.pts??0;    s.gpPts++;    }
+      if(tracked.includes('reb'))    { s.totalReb+=p.reb??0;    s.gpReb++;    }
+      if(tracked.includes('ast'))    { s.totalAst+=p.ast??0;    s.gpAst++;    }
+      if(tracked.includes('stl'))    { s.totalStl+=p.stl??0;    s.gpStl++;    }
+      if(tracked.includes('blk'))    { s.totalBlk+=p.blk??0;    s.gpBlk++;    }
+      if(tracked.includes('clutch')) { s.totalClutch+=p.clutch??0; s.gpClutch++; }
+      if(tracked.includes('fgm')&&tracked.includes('fga')){
+        s.totalFgm+=p.fgm??0; s.totalFga+=p.fga??0; s.gpFg++;
+      }
+    };
+
+    g.teamA.forEach(p=>processPlayer(p, winA));
+    g.teamB.forEach(p=>processPlayer(p, winB));
   });
-  return Object.values(stats).filter(s=>s.gp>0);
+
+  return Object.values(stats).filter(s=>s.gp>0).map(s=>({
+    ...s,
+    ppg:   s.gpPts>0    ? s.totalPts/s.gpPts       : null,
+    rpg:   s.gpReb>0    ? s.totalReb/s.gpReb        : null,
+    apg:   s.gpAst>0    ? s.totalAst/s.gpAst        : null,
+    spg:   s.gpStl>0    ? s.totalStl/s.gpStl        : null,
+    bpg:   s.gpBlk>0    ? s.totalBlk/s.gpBlk        : null,
+    cpg:   s.gpClutch>0 ? s.totalClutch/s.gpClutch  : null,
+    fgpct: s.gpFg>0&&s.totalFga>0 ? s.totalFgm/s.totalFga : null,
+  }));
 }
 
 // ═══════════════════════════════════════════════
 // RENDER: STANDINGS
 // ═══════════════════════════════════════════════
-function setSort(s){
-  sortBy=s;
-  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelector(`.sort-btn[onclick="setSort('${s}')"]`).classList.add('active');
-  renderStandings();
-}
+function setSort(s){ sortBy=s; document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active')); document.querySelector(`.sort-btn[onclick="setSort('${s}')"]`).classList.add('active'); renderStandings(); }
 
 function renderStandings(){
   const stats=computeStats();
-  if(!stats.length){
-    document.getElementById('standings-content').innerHTML=`<div class="empty"><div class="empty-icon">📊</div>No games yet</div>`;
-    return;
-  }
+  if(!stats.length){ document.getElementById('standings-content').innerHTML=`<div class="empty"><div class="empty-icon">📊</div>No games yet</div>`; return; }
 
   const sorted=[...stats].sort((a,b)=>{
-    if(sortBy==='ppg') return (b.totalPts/b.gp)-(a.totalPts/a.gp);
+    const va=a[sortBy]??-1, vb=b[sortBy]??-1;
+    if(sortBy==='ppg')  return (b.ppg??-1)-(a.ppg??-1);
     if(sortBy==='wins') return b.wins-a.wins;
-    if(sortBy==='pct') return (b.wins/b.gp)-(a.wins/a.gp);
-    if(sortBy==='gp') return b.gp-a.gp;
+    if(sortBy==='pct')  return (b.wins/b.gp)-(a.wins/a.gp);
+    if(sortBy==='gp')   return b.gp-a.gp;
+    if(sortBy==='rpg')  return (b.rpg??-1)-(a.rpg??-1);
+    if(sortBy==='apg')  return (b.apg??-1)-(a.apg??-1);
+    if(sortBy==='fgpct')return (b.fgpct??-1)-(a.fgpct??-1);
     if(sortBy==='name') return a.name.localeCompare(b.name);
     return 0;
   });
 
-  const maxPpg=Math.max(...sorted.map(s=>s.gp>0?s.totalPts/s.gp:0),1);
-
-  // Summary chips
+  const maxPpg=Math.max(...sorted.map(s=>s.ppg??0),1);
   const totalGames=allGames.length;
-  const totalPlayers=sorted.length;
-  const topScorer=sorted.slice().sort((a,b)=>(b.totalPts/b.gp)-(a.totalPts/a.gp))[0];
+  const topScorer=sorted.slice().sort((a,b)=>(b.ppg??0)-(a.ppg??0))[0];
 
   const chips=`<div class="stat-chips">
-    <div class="stat-chip"><div class="stat-chip-val">${totalGames}</div><div class="stat-chip-label">Games played</div></div>
-    <div class="stat-chip"><div class="stat-chip-val">${totalPlayers}</div><div class="stat-chip-label">Players</div></div>
-    <div class="stat-chip"><div class="stat-chip-val">${topScorer?(topScorer.totalPts/topScorer.gp).toFixed(1):'—'}</div><div class="stat-chip-label">Top PPG</div></div>
+    <div class="stat-chip"><div class="stat-chip-val">${totalGames}</div><div class="stat-chip-label">Games</div></div>
+    <div class="stat-chip"><div class="stat-chip-val">${sorted.length}</div><div class="stat-chip-label">Players</div></div>
+    <div class="stat-chip"><div class="stat-chip-val">${topScorer&&topScorer.ppg!=null?topScorer.ppg.toFixed(1):'—'}</div><div class="stat-chip-label">Top PPG</div></div>
   </div>`;
 
   const rows=sorted.map((s,i)=>{
-    const ppg=(s.totalPts/s.gp).toFixed(1);
-    const pct=s.gp>0?((s.wins/s.gp)*100).toFixed(0):0;
-    const barW=((s.totalPts/s.gp)/maxPpg*100).toFixed(1);
+    const ppgStr=s.ppg!=null?s.ppg.toFixed(1):'—';
+    const rpgStr=s.rpg!=null?s.rpg.toFixed(1):'—';
+    const apgStr=s.apg!=null?s.apg.toFixed(1):'—';
+    const fgStr =s.fgpct!=null?(s.fgpct*100).toFixed(1)+'%':'—';
+    const barW  =s.ppg!=null?((s.ppg/maxPpg)*100).toFixed(1):0;
     return `<tr onclick="jumpToPlayer('${s.name}')">
       <td class="rank-cell ${i===0?'rank-1c':''}">${i+1}</td>
       <td class="player-name-cell">${s.name}</td>
       <td class="wl-cell"><span class="w">${s.wins}</span><span style="color:var(--muted)">–</span><span class="l">${s.losses}</span></td>
-      <td class="gp-cell">${s.gp}</td>
-      <td class="ppg-cell">
-        ${ppg}
-        <div class="pct-bar-wrap"><div class="pct-bar-fill" style="width:${barW}%"></div></div>
-      </td>
+      <td class="stat-cell">${s.gp}</td>
+      <td class="stat-cell">${ppgStr}<div class="pct-bar-wrap"><div class="pct-bar-fill" style="width:${barW}%"></div></div></td>
+      <td class="stat-cell">${rpgStr}</td>
+      <td class="stat-cell">${apgStr}</td>
+      <td class="stat-cell">${fgStr}</td>
     </tr>`;
   }).join('');
 
   document.getElementById('standings-content').innerHTML=chips+`
     <table class="standings-table">
-      <thead><tr>
-        <th>#</th><th>Player</th><th>W–L</th><th class="r">GP</th><th class="r">PPG</th>
-      </tr></thead>
+      <thead><tr><th>#</th><th>Player</th><th>W–L</th><th>GP</th><th>PPG</th><th>RPG</th><th>APG</th><th>FG%</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
@@ -784,64 +687,77 @@ function renderStandings(){
 function renderPlayerSelect(){
   const sel=document.getElementById('player-lookup');
   const cur=sel.value;
-  const names=[...new Set([
-    ...allRoster.map(p=>p.name),
-    ...allGames.flatMap(g=>[...g.teamA,...g.teamB].map(p=>p.name))
-  ])].sort();
+  const names=[...new Set([...allRoster.map(p=>p.name),...allGames.flatMap(g=>[...g.teamA,...g.teamB].map(p=>p.name))])].sort();
   sel.innerHTML='<option value="">— choose a player —</option>'+names.map(n=>`<option value="${n}" ${n===cur?'selected':''}>${n}</option>`).join('');
 }
 
-function jumpToPlayer(name){
-  showTab('players');
-  document.getElementById('player-lookup').value=name;
-  renderPlayerDetail();
-}
+function jumpToPlayer(name){ showTab('players'); document.getElementById('player-lookup').value=name; renderPlayerDetail(); }
 
 function renderPlayerDetail(){
   const name=document.getElementById('player-lookup').value;
   const el=document.getElementById('player-detail');
   if(!name){el.innerHTML='';return;}
 
-  const games=allGames.filter(g=>[...g.teamA,...g.teamB].some(p=>p.name===name))
-    .sort((a,b)=>b.date.localeCompare(a.date));
+  const games=allGames.filter(g=>[...g.teamA,...g.teamB].some(p=>p.name===name)).sort((a,b)=>b.date.localeCompare(a.date));
+  if(!games.length){ el.innerHTML=`<div class="empty"><div class="empty-icon">🏀</div>${name} has no recorded games</div>`; return; }
 
-  if(!games.length){
-    el.innerHTML=`<div class="empty"><div class="empty-icon">🏀</div>${name} has no recorded games</div>`;
-    return;
-  }
+  // Accumulate stats only when tracked
+  let wins=0, losses=0;
+  let totPts=0, gpPts=0, totReb=0, gpReb=0, totAst=0, gpAst=0;
+  let totStl=0, gpStl=0, totBlk=0, gpBlk=0, totClutch=0, gpClutch=0;
+  let totFgm=0, totFga=0, gpFg=0;
 
-  let wins=0,losses=0,totalPts=0;
   const rows=games.map(g=>{
     const onA=g.teamA.some(p=>p.name===name);
     const entry=[...g.teamA,...g.teamB].find(p=>p.name===name);
-    const pts=entry?entry.pts:0;
     const myScore=onA?g.scoreA:g.scoreB;
     const oppScore=onA?g.scoreB:g.scoreA;
     const won=myScore>oppScore;
     if(won) wins++; else losses++;
-    totalPts+=pts;
+
+    const tracked=g.trackedStats||[];
+    const statParts=[];
+
+    if(tracked.includes('pts')){ const v=entry?.pts??0; totPts+=v; gpPts++; statParts.push(`${v} pts`); }
+    if(tracked.includes('reb')){ const v=entry?.reb??0; totReb+=v; gpReb++; statParts.push(`${v} reb`); }
+    if(tracked.includes('ast')){ const v=entry?.ast??0; totAst+=v; gpAst++; statParts.push(`${v} ast`); }
+    if(tracked.includes('stl')){ const v=entry?.stl??0; totStl+=v; gpStl++; statParts.push(`${v} stl`); }
+    if(tracked.includes('blk')){ const v=entry?.blk??0; totBlk+=v; gpBlk++; statParts.push(`${v} blk`); }
+    if(tracked.includes('clutch')){ const v=entry?.clutch??0; totClutch+=v; gpClutch++; statParts.push(`${v} clutch`); }
+    if(tracked.includes('fgm')&&tracked.includes('fga')){
+      const m=entry?.fgm??0, a=entry?.fga??0;
+      totFgm+=m; totFga+=a; gpFg++;
+      statParts.push(`${m}/${a} FG`);
+    }
+
+    const mainPts=tracked.includes('pts')?(entry?.pts??0):null;
+
     return `<div class="player-game-row">
       <div>
         <div class="pgr-date">${fmtShort(g.date)}</div>
         <div class="pgr-opp">Team ${onA?'A':'B'} · ${myScore}–${oppScore}</div>
+        ${statParts.length?`<div class="pgr-stats">${statParts.join(' · ')}</div>`:''}
       </div>
       <div style="display:flex;align-items:center;gap:12px">
         <span class="pgr-result ${won?'pgr-w':'pgr-l'}">${won?'W':'L'}</span>
-        <span class="pgr-pts">${pts} pts</span>
+        ${mainPts!==null?`<span class="pgr-pts">${mainPts} pts</span>`:''}
       </div>
     </div>`;
   }).join('');
 
-  const ppg=games.length?(totalPts/games.length).toFixed(1):'—';
-  const pct=games.length?Math.round(wins/games.length*100):0;
+  // Career chips — only show stats that have been tracked at least once
+  const chipArr=[];
+  chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${wins}–${losses}</div><div class="stat-chip-label">Record</div></div>`);
+  if(gpPts>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${(totPts/gpPts).toFixed(1)}</div><div class="stat-chip-label">PPG</div></div>`);
+  if(gpReb>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${(totReb/gpReb).toFixed(1)}</div><div class="stat-chip-label">RPG</div></div>`);
+  if(gpAst>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${(totAst/gpAst).toFixed(1)}</div><div class="stat-chip-label">APG</div></div>`);
+  if(gpStl>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${(totStl/gpStl).toFixed(1)}</div><div class="stat-chip-label">SPG</div></div>`);
+  if(gpBlk>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${(totBlk/gpBlk).toFixed(1)}</div><div class="stat-chip-label">BPG</div></div>`);
+  if(gpClutch>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${(totClutch/gpClutch).toFixed(1)}</div><div class="stat-chip-label">CLCH/G</div></div>`);
+  if(gpFg>0&&totFga>0) chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${((totFgm/totFga)*100).toFixed(1)}%</div><div class="stat-chip-label">FG%</div></div>`);
+  chipArr.push(`<div class="stat-chip"><div class="stat-chip-val">${games.length}</div><div class="stat-chip-label">GP</div></div>`);
 
-  el.innerHTML=`
-    <div class="stat-chips">
-      <div class="stat-chip"><div class="stat-chip-val">${wins}–${losses}</div><div class="stat-chip-label">Record</div></div>
-      <div class="stat-chip"><div class="stat-chip-val">${ppg}</div><div class="stat-chip-label">PPG</div></div>
-      <div class="stat-chip"><div class="stat-chip-val">${pct}%</div><div class="stat-chip-label">Win rate</div></div>
-    </div>
-    <div class="card">${rows}</div>`;
+  el.innerHTML=`<div class="stat-chips">${chipArr.join('')}</div><div class="card">${rows}</div>`;
 }
 
 // ═══════════════════════════════════════════════
@@ -852,10 +768,35 @@ function checkPw(){
     document.getElementById('admin-lock').style.display='none';
     document.getElementById('admin-panel').style.display='block';
     document.getElementById('game-date').value=today();
+    buildStatToggles();
     refreshPlayerSelects();
+  } else { showToast('Incorrect password',true); }
+}
+
+// ═══════════════════════════════════════════════
+// ADMIN — STAT TOGGLES
+// ═══════════════════════════════════════════════
+function buildStatToggles(){
+  const wrap=document.getElementById('stat-toggles');
+  wrap.innerHTML=STAT_DEFS.map(s=>`
+    <label class="stat-toggle" id="toggle-${s.key}" onclick="toggleStat('${s.key}')">
+      <div class="stat-toggle-dot"></div>
+      ${s.label}
+    </label>`).join('');
+  activeStats.clear();
+}
+
+function toggleStat(key){
+  const el=document.getElementById('toggle-'+key);
+  if(activeStats.has(key)){
+    activeStats.delete(key);
+    el.classList.remove('checked');
   } else {
-    showToast('Incorrect password',true);
+    activeStats.add(key);
+    el.classList.add('checked');
   }
+  // Re-render chips so stat inputs appear/disappear
+  renderTeamChips();
 }
 
 // ═══════════════════════════════════════════════
@@ -865,28 +806,19 @@ async function addNewPlayer(){
   const name=document.getElementById('new-player-name').value.trim();
   if(!name){showToast('Enter a name',true);return;}
   if(allRoster.some(p=>p.name.toLowerCase()===name.toLowerCase())){showToast('Player already exists',true);return;}
-  try{
-    await db.collection('ppl_roster').add({name});
-    document.getElementById('new-player-name').value='';
-    showToast(`✓ ${name} added to roster`);
-  }catch(e){showToast('Error adding player',true);console.error(e);}
+  try{ await db.collection('ppl_roster').add({name}); document.getElementById('new-player-name').value=''; showToast(`✓ ${name} added`); }
+  catch(e){ showToast('Error adding player',true); console.error(e); }
 }
-
 function renderRosterList(){
   const el=document.getElementById('roster-list');
   if(!el) return;
-  if(!allRoster.length){el.innerHTML='<div style="font-family:var(--fm);font-size:11px;color:var(--muted)">No players yet</div>';return;}
-  el.innerHTML=allRoster.map(p=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px">
-      <span>${p.name}</span>
-      <button class="remove-chip" onclick="removePlayer('${p.id}','${p.name}')">✕</button>
-    </div>`).join('');
+  if(!allRoster.length){ el.innerHTML='<div style="font-family:var(--fm);font-size:11px;color:var(--muted)">No players yet</div>'; return; }
+  el.innerHTML=allRoster.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px"><span>${p.name}</span><button class="remove-chip" onclick="removePlayer('${p.id}','${p.name}')">✕</button></div>`).join('');
 }
-
 async function removePlayer(id,name){
   if(!confirm(`Remove ${name} from the roster?`)) return;
-  try{await db.collection('ppl_roster').doc(id).delete();showToast(`Removed ${name}`);}
-  catch(e){showToast('Error removing',true);console.error(e);}
+  try{ await db.collection('ppl_roster').doc(id).delete(); showToast(`Removed ${name}`); }
+  catch(e){ showToast('Error removing',true); console.error(e); }
 }
 
 // ═══════════════════════════════════════════════
@@ -906,11 +838,12 @@ function addPlayerToTeam(team){
   const name=document.getElementById(selId).value;
   if(!name) return;
   const entry=team==='A'?entryA:entryB;
-  if(entry.some(p=>p.name===name)){showToast(`${name} already on Team ${team}`,true);return;}
-  // Also prevent adding to both teams
+  if(entry.some(p=>p.name===name)){ showToast(`${name} already on Team ${team}`,true); return; }
   const other=team==='A'?entryB:entryA;
-  if(other.some(p=>p.name===name)){showToast(`${name} is already on the other team`,true);return;}
-  entry.push({name,pts:0});
+  if(other.some(p=>p.name===name)){ showToast(`${name} is already on the other team`,true); return; }
+  const newP={name,pts:0};
+  STAT_DEFS.forEach(s=>{ if(s.key!=='pts') newP[s.key]=0; });
+  entry.push(newP);
   renderTeamChips();
 }
 
@@ -920,75 +853,106 @@ function removeFromTeam(team,name){
   renderTeamChips();
 }
 
-function updatePts(team,name,val){
+function updatePlayerStat(team,name,statKey,val){
   const entry=team==='A'?entryA:entryB;
   const p=entry.find(x=>x.name===name);
-  if(p) p.pts=parseInt(val)||0;
-  updateTotals();
+  if(p) p[statKey]=parseInt(val)||0;
+  if(statKey==='pts') updateTotals();
 }
 
 function renderTeamChips(){
   ['A','B'].forEach(team=>{
     const entry=team==='A'?entryA:entryB;
-    document.getElementById(`team${team}-chips`).innerHTML=entry.map(p=>`
-      <div class="player-chip">
-        <span>${p.name}</span>
-        <div style="display:flex;align-items:center;gap:6px">
-          <input type="number" min="0" max="99" value="${p.pts}"
-            oninput="updatePts('${team}','${p.name}',this.value)" placeholder="0">
+    // Stats to show — always pts if pts is toggled, plus others
+    const statsToShow=[...activeStats];
+
+    document.getElementById(`team${team}-chips`).innerHTML=entry.map(p=>{
+      // Build stat input fields
+      const statInputs=statsToShow.map(key=>{
+        const def=STAT_DEFS.find(d=>d.key===key);
+        if(!def) return '';
+        const isClutch=def.isClutch;
+        return `<div class="chip-stat-input">
+          <label>${def.short}${isClutch?' ⊂PTS':''}</label>
+          <input type="number" min="0" max="999" value="${p[key]??0}"
+            oninput="updatePlayerStat('${team}','${p.name}','${key}',this.value)">
+        </div>`;
+      }).join('');
+
+      return `<div class="player-chip">
+        <div class="chip-top">
+          <span>${p.name}</span>
           <button class="remove-chip" onclick="removeFromTeam('${team}','${p.name}')">✕</button>
         </div>
-      </div>`).join('');
+        ${statsToShow.length?`<div class="chip-stats">${statInputs}</div>`:''}
+      </div>`;
+    }).join('');
   });
   updateTotals();
 }
 
 function updateTotals(){
-  document.getElementById('teamA-total').textContent=entryA.reduce((a,p)=>a+p.pts,0);
-  document.getElementById('teamB-total').textContent=entryB.reduce((a,p)=>a+p.pts,0);
+  // Total is always sum of pts field (whether pts stat is tracked or not)
+  // If pts not tracked, admin just won't see that column but totals still compute
+  document.getElementById('teamA-total').textContent=entryA.reduce((a,p)=>a+(p.pts||0),0);
+  document.getElementById('teamB-total').textContent=entryB.reduce((a,p)=>a+(p.pts||0),0);
 }
 
 async function saveGame(){
   const date=document.getElementById('game-date').value;
   const notes=document.getElementById('game-notes').value.trim();
-  if(!date){showToast('Pick a date',true);return;}
-  if(entryA.length<1||entryB.length<1){showToast('Add at least one player per team',true);return;}
-  const scoreA=entryA.reduce((a,p)=>a+p.pts,0);
-  const scoreB=entryB.reduce((a,p)=>a+p.pts,0);
-  if(scoreA===0&&scoreB===0){showToast('Enter some points first',true);return;}
+  if(!date){ showToast('Pick a date',true); return; }
+  if(entryA.length<1||entryB.length<1){ showToast('Add at least one player per team',true); return; }
+
+  const scoreA=entryA.reduce((a,p)=>a+(p.pts||0),0);
+  const scoreB=entryB.reduce((a,p)=>a+(p.pts||0),0);
+
+  // Validate: if pts is tracked, require non-zero
+  if(activeStats.has('pts')&&scoreA===0&&scoreB===0){ showToast('Enter some points first',true); return; }
+
+  // Validate: if only W/L (no stats), still allow saving
+  const trackedStats=[...activeStats];
+
+  // Build player objects — only include tracked stat fields
+  const buildPlayers=(entry)=>entry.map(p=>{
+    const obj={name:p.name};
+    trackedStats.forEach(k=>{ obj[k]=p[k]??0; });
+    // Always store pts for score totalling
+    if(!trackedStats.includes('pts')) obj.pts=p.pts||0;
+    return obj;
+  });
 
   try{
     await db.collection('ppl_games').add({
       date, notes,
-      teamA:entryA.map(p=>({name:p.name,pts:p.pts})),
-      teamB:entryB.map(p=>({name:p.name,pts:p.pts})),
+      trackedStats,
+      teamA: buildPlayers(entryA),
+      teamB: buildPlayers(entryB),
       scoreA, scoreB,
       ts: firebase.firestore.FieldValue.serverTimestamp()
     });
-    entryA=[];entryB=[];
+    entryA=[];entryB=[];activeStats.clear();
+    buildStatToggles();
     renderTeamChips();
     document.getElementById('game-notes').value='';
     document.getElementById('game-date').value=today();
     showToast(`✓ Game saved — Team A ${scoreA}, Team B ${scoreB}`);
-  }catch(e){showToast('Error saving game',true);console.error(e);}
+  }catch(e){ showToast('Error saving game',true); console.error(e); }
 }
 
 function refreshAdminGameSelect(){
   const sel=document.getElementById('del-game-sel');
   if(!sel) return;
-  sel.innerHTML='<option value="">— select game —</option>'+
-    allGames.map(g=>`<option value="${g.id}">${fmtShort(g.date)} · A ${g.scoreA} – B ${g.scoreB}</option>`).join('');
+  sel.innerHTML='<option value="">— select game —</option>'+allGames.map(g=>`<option value="${g.id}">${fmtShort(g.date)} · A ${g.scoreA} – B ${g.scoreB}</option>`).join('');
 }
 
 async function deleteGame(){
   const id=document.getElementById('del-game-sel').value;
-  if(!id){showToast('Select a game',true);return;}
+  if(!id){ showToast('Select a game',true); return; }
   const g=allGames.find(x=>x.id===id);
   if(!confirm(`Delete game from ${fmtShort(g?.date)}?`)) return;
-  try{
-    await db.collection('ppl_games').doc(id).delete();
-    showToast('Game deleted');
-  }catch(e){showToast('Error deleting',true);console.error(e);}
+  try{ await db.collection('ppl_games').doc(id).delete(); showToast('Game deleted'); }
+  catch(e){ showToast('Error deleting',true); console.error(e); }
 }
 
 // ═══════════════════════════════════════════════
@@ -997,17 +961,14 @@ async function deleteGame(){
 let _tt;
 function showToast(msg,err=false){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.className='show'+(err?' err':'');
-  clearTimeout(_tt);_tt=setTimeout(()=>{t.className='';},2800);
+  t.textContent=msg; t.className='show'+(err?' err':'');
+  clearTimeout(_tt); _tt=setTimeout(()=>{t.className='';},2800);
 }
 
 // ═══════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════
-function init(){
-  setStatus('Connecting…');
-  startListeners();
-}
+function init(){ setStatus('Connecting…'); startListeners(); }
 init();
 </script>
 </body>
